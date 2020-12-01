@@ -1,0 +1,27 @@
+{
+  "name": "assignment-vue-users-list",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "server": "node ./server/app.js --port 3000",
+    "dev": "concurrently \"vue-cli-service serve\" \"npm run server\"",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "bootstrap-icons": "^1.1.0",
+    "core-js": "^3.6.5",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.0",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "concurrently": "^5.3.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
