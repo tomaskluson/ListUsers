@@ -1,6 +1,6 @@
 <template>
   <div class="usersList">
-      <table>
+      <table v-if="renderData.length > 0">
         <thead>
           <tr>
             <th>First Name</th>
@@ -13,39 +13,46 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users">
-            <td>{{ user.firstName }}</td>
-            <td>{{ user.lastName }}</td>
-            <td>{{ user.age }}</td>
-            <td>{{ user.gender }}</td>
-            <td v-bind:style="user.status === 'ACTIVE' ? greenIcon : redIcon"></td>
-            <td>{{ user.email }}</td>
-            <td> <img v-bind:src="user.avatar || '../../public/image/noimage.png'"></td>
+          <tr v-for="item in renderData" :key="item.id" @click.prevent="updateSelectedUser(item.id)">
+            <td>{{ item.firstName }}</td>
+            <td>{{ item.lastName }}</td>
+            <td>{{ item.age }}</td>
+            <td>{{ item.gender }}</td>
+            <td v-bind:style="item.status === 'ACTIVE' ? greenIcon : redIcon"></td>
+            <td>{{ item.email }}</td>
+            <td> <img v-bind:src="item.avatar || '../../public/image/noimage.png'"></td>
           </tr>
         </tbody>
       </table>
-      <div class="flex">
-        <button><img src="../../public/image/left.svg" alt="">Previous</button>
-        <div class="content">Current page: <span>1</span></div>
-        <button>Next <img src="../../public/image/right.svg" alt=""></button>
-      </div>
-    <detail-user v-for="user in users" :key="user.id" :user="user" />
+      <pagination
+          :total="this.users.length"
+          :currentPage="currentPage"
+          @on-page-click="onPageClick"
+      />
+    <!-- <h3 v-if="selectedUser != null">Selected user is: {{selectedUser}}</h3> -->
+    <p>POČET STRAN: {{ this.pagesCount }}</p>
+    <detail-user v-bind:selectedUser="selectedUser" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import DetailUser from '../components/DetailUser.vue'
+import Pagination from '../components/Pagination'
 
 export default {
   name: 'UsersList',
   components: {
-    DetailUser
+    DetailUser,
+    Pagination
   },
   data() {
     return {
-      limit: 10,
       users: [],
+      selectedUser: {},
+      pagesCount: '',
+      currentPage: 1,
+      size: 10,
       greenIcon: {
         display: 'block',
         'background-color': '#29b473',
@@ -66,23 +73,33 @@ export default {
       },
     };
   },
+  created: function() {
+    this.getPagesCount();
+  },
   mounted: function() {
     this.getUsers();
   },
+  computed: {
+    renderData() {
+      const start = (this.currentPage - 1) * 10;
+      const end = start + 10;
+      return this.users.slice(start, end);
+    },
+  },
   methods: {
-    getUsers() {
-      const header = {
-        headers: { "content-type": "application/x-www-form-urlencoded" }
-      };
-      axios
-          .get(
-              `http://localhost:3000/api/users?${this.limit}`, header
-          )
-          .then(response => {
-            this.users = response.data.results
-                .map(user => this.extractData(user));
-          })
-          .catch(error => console.log(error));
+    getPagesCount() {
+      return axios.get('http://localhost:3000/api/users')
+          .then(response => this.pagesCount = response.data.meta.pagesCount);
+    },
+    async getUsers() {
+      const countPage = await this.getPagesCount();
+      console.log(countPage);
+      for (let i = 1; i <= countPage; i++) {
+        await axios.get(`http://localhost:3000/api/users?page=${i}`)
+            .then(response => {
+              response.data.results.forEach(user => this.users.push(user));
+        })
+      }
     },
     dateConvert(dob) {
       return dob.split("T")[0];
@@ -128,6 +145,16 @@ export default {
         }
       };
       return objUser;
+    },
+    updateSelectedUser(userId) {
+      this.selectedUser = this.users.find(el => {
+        if(el.id === userId){
+          return this.selectedUser = el;
+        }
+      })
+    },
+    onPageClick(p) {
+      this.currentPage = p;
     },
   }
 }
