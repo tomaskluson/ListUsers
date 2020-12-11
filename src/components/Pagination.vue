@@ -1,8 +1,8 @@
 <template>
     <div class="flex">
-      <button @click="prevPage"><img src="../../public/image/left.svg" alt="">Previous</button>
+      <button :disabled="currentPage === 1" @click="prevPage()"><img src="../../public/image/left.svg" alt="">Previous</button>
       <div class="content">Current page: <span> {{ this.currentPage }} </span></div>
-      <button @click="nextPage" >Next <img src="../../public/image/right.svg" alt=""></button>
+      <button :disabled="currentPage > countActualPage() - 1" @click="nextPage()">Next <img src="../../public/image/right.svg" alt=""></button>
     </div>
 </template>
 
@@ -13,73 +13,35 @@ export default {
 
   data() {
     return {
-      pageNumber: 1,
+      currentPage: 1,
     }
   },
 
   props: {
-    currentPage: {
-      type: Number,
-      default: 1
-    },
-    total: {
+    pageCount: {
       type: Number,
     },
-    onPageClick: {
-      type: Function,
+    actualPage: {
+      type: Number,
     },
-    users: {
-      type: Array,
+    usersCount: {
+      type: Number,
     },
     size: {
       type: Number,
-    }
-  },
-
-  computed: {
-    pageItem() {
-      const count = Math.ceil(this.total / 10);
-      let items = [];
-      for (let i = 1; i <= count; i++) {
-        items.push({
-          label: i,
-          id: i,
-        });
-      }
-      return items;
     },
-
-    pageCount(){
-      let l = this.users.length,
-          s = this.size;
-      return Math.ceil(l/s);
-    },
-
-    paginatedData(){
-      const start = this.pageNumber * this.size,
-          end = start + this.size;
-      return this.users.slice(start, end);
-    }
-
   },
 
   methods: {
-    updateSelectedUser(userId) {
-      this.selectedUser = this.users.find(el => {
-        if(el.id === userId){
-          return this.selectedUser = el;
-        }
-      })
-    },
-    onPageClickInner(p) {
-      this.$emit("on-page-click", p);
-    },
     nextPage(){
-      this.currentPage++;
+      this.$emit("current-count-page", ++this.currentPage);
     },
     prevPage(){
-      this.currentPage--;
-    }
+      this.$emit("current-count-page", --this.currentPage);
+    },
+    countActualPage() {
+      return Math.ceil(this.usersCount / this.size);
+    },
   }
 }
 </script>
