@@ -29,7 +29,7 @@
       <p>Phone:</p>
       <p>{{ selectedUser.phone }}</p>
       <p>Email:</p>
-      <p{{ selectedUser.email }}</p>
+      <p>{{ selectedUser.email }}</p>
     </div>
   </div>
 </template>

@@ -7,13 +7,12 @@
             <th @click="sortCol('lastName', sortOrder)">Last Name <i class="fas" :class="cssSort('lastName')"></i></th>
             <th @click="sortCol('age', sortOrder)">Age <i class="fas" :class="cssSort('age')"></i></th>
             <th @click="sortCol('gender', sortOrder)">Gender <i class="fas" :class="cssSort('gender')"></i></th>
-            <th @click="sortCol('active', sortOrder)">Active <i class="fas" :class="cssSort('active')"></i></th>
+            <th @click="sortCol('status', sortOrder)">Active <i class="fas" :class="cssSort('status')"></i></th>
             <th>Email</th>
             <th>Avatar</th>
           </tr>
         </thead>
         <tbody>
-        <!-- místo renderData by mělo být pole (this.users) -->
           <tr v-for="item in this.users.slice(pageBegin(), pageEnd())" :key="item.id" @click.prevent="updateSelectedUser(item.id)">
             <td>{{ item.firstName }}</td>
             <td>{{ item.lastName }}</td>
@@ -25,13 +24,17 @@
           </tr>
         </tbody>
       </table>
-       <pagination @current-count-page="currentPage = $event" :usersCount="usersCount" :size="size"/>
-    <detail-user v-bind:selectedUser="selectedUser" :sortDataTable="sortDataTable"/>
+      <div class="flex">
+        <button :disabled="currentPage === 1" @click="prevPage()"><img src="../../public/image/left.svg" alt="" class="arrows">Previous</button>
+        <div class="content">Current page: <span> {{ this.currentPage }} </span></div>
+        <button :disabled="currentPage > countActualPage() - 1" @click="nextPage()">Next <img src="../../public/image/right.svg" alt="" class="arrows"></button>
+      </div>
+    <detail-user v-bind:selectedUser="selectedUser"/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
 import DetailUser from '../components/DetailUser.vue'
 import Pagination from '../components/Pagination'
 
@@ -48,6 +51,7 @@ export default {
       usersCount: 0,
       pagesCount: 0,
       size: 10,
+      previousSortColumn: '',
       currentPage: 1,
       sortOrder: "asc",
       sortColumn: '',
@@ -73,61 +77,75 @@ export default {
     };
   },
 
-  mounted: function(){
+  mounted: function() {
     this.getFirstUsers();
     this.getNextUsers();
     this.sortCol();
+    //this.methodForGetPromise('https://s3.amazonaws.com/uifaces/faces/twitter/giancarlon/128.jpg');
   },
   methods: {
+
     async getFirstUsers() {
-      await axios.get(`http://localhost:3000/api/users`)
+      //async getFirstUsers() {
+      /*await axios.get(`http://localhost:3000/api/users`)
         .then(response => {
             response.data.results.forEach(user => this.users.push(this.extractData(user)));
             this.usersCount = response.data.meta.usersCount;
-        })
+        })*/
+      return fetch('http://localhost:3000/api/users')
+          .then(response => response.json())
+          .then(data => data.results.forEach(
+              user => this.users.push(this.extractData(user))));
     },
     async getNextUsers() {
       this.pagesCount = await this.getPagesCount();
+      this.usersCount = await this.getUsersCount();
+
       for (let i = 2; i <= this.pagesCount; i++) {
+        fetch(`http://localhost:3000/api/users?page=${i}`)
+          .then(response => response.json())
+          .then(data => data.results.forEach(
+              user => this.users.push(this.extractData(user))));
+      }
+      /*for (let i = 2; i <= this.pagesCount; i++) {
         await axios.get(`http://localhost:3000/api/users?page=${i}`)
             .then(response => {
               response.data.results.forEach(user => this.users.push(this.extractData(user)));
             })
-      }
+      }*/
     },
-    getPagesCount() {
-      return axios.get('http://localhost:3000/api/users')
-          .then(response => this.pagesCount = response.data.meta.pagesCount);
+    async getPagesCount() {
+      return fetch('http://localhost:3000/api/users')
+          .then(response => response.json())
+          .then(data => this.pagesCount = data.meta.pagesCount)
+      /*return axios.get('http://localhost:3000/api/users')
+          .then(response => this.pagesCount = response.data.meta.pagesCount);*/
     },
-    /*sortCol(column, order) {
-      this.sortColumn = column;
-      this.sortOrder = order === "asc" ? "desc" : "asc";
-
-      let usersSort = this.users.slice(0, this.pageEnd());
-      console.log(usersSort);
-      usersSort = usersSort.sort(this.compareValues(this.sortColumn, this.sortOrder));
-      let usersNoSort = this.users.slice(this.pageEnd(), this.users.length - 1);
-      this.users = usersSort.concat(usersNoSort);
-      return this.users;
-      //console.log(this.currentPage);
-      /*this.userSort = this.users.slice(0, this.pageEnd());
-      this.userSort = this.userSort.sort(this.compareValues(this.sortColumn, this.sortOrder))
-      return this.userSort;*/
-
-      // reset current page
-      //this.currentPage = 1;
-    //},
+    async getUsersCount() {
+      return fetch('http://localhost:3000/api/users')
+          .then(response => response.json())
+          .then(data => this.usersCount = data.meta.usersCount);
+    },
     sortCol(column, order) {
       this.sortColumn = column;
       this.sortOrder = order === "asc" ? "desc" : "asc";
+      this.showOnFirstPage();
       this.sortDataTable();
     },
     sortDataTable() {
-      let usersSort = this.users.slice(0, this.pageEnd());
-      console.log(usersSort);
-      usersSort = usersSort.sort(this.compareValues(this.sortColumn, this.sortOrder));
-      let usersNoSort = this.users.slice(this.pageEnd(), this.users.length - 1);
-      this.users = usersSort.concat(usersNoSort);
+      if(this.sortColumn){
+        let usersSort = this.users.slice(0, this.pageEnd());
+        this.compare(this.sortOrder, this.sortColumn, usersSort);
+        let usersNoSort = this.users.slice(this.pageEnd(), this.users.length);
+        this.users = usersSort.concat(usersNoSort);
+        this.showOnFirstPage();
+      }
+    },
+    showOnFirstPage(){
+      if(this.sortColumn !== this.previousSortColumn){
+        this.previousSortColumn = this.sortColumn;
+        this.currentPage = 1;
+      }
     },
     dateConvert(dob) {
       return dob.split("T")[0];
@@ -155,37 +173,33 @@ export default {
       let birthdate = this.formatBirthDate(age);
       status = this.getStatus(status);
       age = this.countAge(age);
-      return { id, firstName, lastName, status, gender, email, age, phone, avatar, birthdate, address }
+      /*avatar = this.existImageAvatar(avatar);*/
+      return { id, firstName, lastName, status, gender, email, age, phone, avatar, birthdate, address };
     },
+    /*existImageAvatar(avatar) {
+      let avatar2 = "";
+      let xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", avatar, false); // false for synchronous request
+      xmlHttp.send( null );
+      let status = xmlHttp.status;
+      if(status === 403){
+        return avatar2 = '../image/noimage.png';
+      }
+      return avatar;
+    },*/
     updateSelectedUser(userId) {
       this.selectedUser = this.users.find(el => {
-        if(el.id === userId){
+        if(el.id === userId) {
           return this.selectedUser = el;
         }
       })
     },
-
-    compareValues(key, order = 'asc') {
-      return function innerSort(a, b) {
-        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-          return 0;
-        }
-
-        const varA = (typeof a[key] === 'string')
-            ? a[key].toUpperCase() : a[key];
-        const varB = (typeof b[key] === 'string')
-            ? b[key].toUpperCase() : b[key];
-
-        let comparison = 0;
-        if (varA > varB) {
-          comparison = 1;
-        } else if (varA < varB) {
-          comparison = -1;
-        }
-        return (
-            (order === 'desc') ? (comparison * -1) : comparison
-        );
-      };
+    compare( order, column, partOfSortUsers) {
+      if(order === "asc") {
+        partOfSortUsers.sort((a, b) => (a[column] > b[column]) ? 1 : -1)
+      } else if(this.sortOrder === "desc") {
+        partOfSortUsers.sort((a, b) => (a[column] < b[column]) ? 1 : -1)
+      }
     },
     isColumn(column) {
       return this.sortColumn === column;
@@ -205,6 +219,18 @@ export default {
     },
     pageBegin() {
       return this.pageEnd() - this.size;
+    },
+    nextPage(){
+      //this.$emit("current-count-page", ++this.currentPage);
+      this.currentPage++;
+      this.sortDataTable();
+    },
+    prevPage(){
+      //this.$emit("current-count-page", --this.currentPage);
+      this.currentPage--;
+    },
+    countActualPage() {
+      return Math.ceil(this.usersCount / this.size);
     },
   }
 }
@@ -259,5 +285,31 @@ export default {
     width: 50%;
   }
 
+  .flex{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .content {
+    padding-top: 10px;
+  }
+
+  button {
+    border: 2px solid green;
+    background: limegreen;
+    height: 30px;
+    width: 90px;
+  }
+
+  img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .arrows {
+    height: 12px;
+    width: 12px;
+  }
 
 </style>
