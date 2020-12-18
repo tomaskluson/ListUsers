@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <UsersList />
+    <keep-alive>
+      <UsersList />
+    </keep-alive>
   </div>
 </template>
 
