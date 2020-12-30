@@ -1,8 +1,8 @@
 <template>
   <div class="flex">
-    <button :disabled="currentPage === 1" @click="prevPage()"><img src="../../public/image/left.svg" alt="" class="arrows">Previous</button>
+    <button :disabled="currentPage === 1" @click="prevPage()"><img src="../../public/image/left.svg" alt="" >Previous</button>
     <div class="content">Current page: <span> {{ this.currentPage }} </span></div>
-    <button :disabled="currentPage > countActualPage() - 1" @click="nextPage()">Next <img src="../../public/image/right.svg" alt="" class="arrows"></button>
+    <button :disabled="currentPage > countActualPage() - 1" @click="nextPage()">Next<img src="../../public/image/right.svg" alt="" ></button>
   </div>
 </template>
 
@@ -57,8 +57,8 @@ export default {
   }
 
   .arrows {
-    height: 12px;
-    width: 12px;
+    height: 28px;
+    width: 17px;
   }
 
   .content {
@@ -75,6 +75,5 @@ export default {
   span {
     font-weight: bold;
   }
-
 
 </style>

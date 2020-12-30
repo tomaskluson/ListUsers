@@ -1,7 +1,9 @@
 <template>
-  <div class="usersList">
-    <table>
-        <thead>
+  <div class="flex">
+    <div class="listUsers">
+      <div v-if="this.users.length !== 0">
+        <table>
+          <thead>
           <tr>
             <th>First Name</th>
             <th @click="sortCol('lastName', sortOrder)">Last Name<i class="fas" :class="cssSort('lastName')"></i></th>
@@ -11,8 +13,8 @@
             <th>Email</th>
             <th>Avatar</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr v-for="item in this.users.slice(pageBegin(), pageEnd())" :key="item.id" @click.prevent="updateSelectedUser(item.id)">
             <td>{{ item.firstName }}</td>
             <td>{{ item.lastName }}</td>
@@ -21,15 +23,19 @@
             <td :style="item.status === 'ACTIVE' ? greenIcon : redIcon "></td>
             <td>{{ item.email }}</td>
             <td>
-                <img v-if="!imgError" :src="`${item.avatar}`" @error="onImgError()">
-                <img v-else :src="`../image/noimage.png`">
+              <img v-if="!imgError" :src="`${item.avatar}`" @error="onImgError()">
+              <img v-else :src="`../image/noimage.png`">
             </td>
           </tr>
-        </tbody>
-      </table>
-    <pagination @current-count-page="currentPage = $event" v-bind:usersCount="usersCount"
-                v-bind:size="size" :sortDataTable="sortDataTable" />
-    <detail-user v-bind:selectedUser="selectedUser"/>
+          </tbody>
+        </table>
+        <pagination @current-count-page="currentPage = $event" v-bind:usersCount="usersCount"
+                    v-bind:size="size" :sortDataTable="sortDataTable" />
+      </div>
+    </div>
+    <div class="detailUsers">
+      <detail-user v-bind:selectedUser="selectedUser" :onImgError="onImgError" />
+    </div>
   </div>
 </template>
 
@@ -62,7 +68,7 @@ export default {
         'border-radius': '30px',
         width: '1px',
         height: '1px',
-        margin: '16px',
+        margin: '28px',
         padding: '8px',
       },
       redIcon: {
@@ -71,7 +77,7 @@ export default {
         'border-radius': '30px',
         width: '1px',
         height: '1px',
-        margin: '16px',
+        margin: '28px',
         padding: '8px',
       },
     };
@@ -154,9 +160,9 @@ export default {
     },
     cssSort(column) {
       return {
-        "bi bi-filter": !this.isColumn(column),
-        "bi bi-sort-up": this.isColumn(column) && this.isOrder("asc"),
-        "bi bi-sort-down-alt": this.isColumn(column) && this.isOrder("desc"),
+        "fa-sort": !this.isColumn(column),
+        "fa-sort-up": this.isColumn(column) && this.isOrder("asc"),
+        "fa-sort-down": this.isColumn(column) && this.isOrder("desc"),
       };
     },
     pageEnd() {
@@ -194,7 +200,7 @@ export default {
       }
     },
     onImgError() {
-      this.imgError = true;
+      return this.imgError = true;
     },
   }
 }
@@ -208,6 +214,7 @@ export default {
   table {
     border-collapse: collapse;
     border: 2px solid black;
+    width: 800px;
   }
 
   tr, td {
@@ -223,8 +230,6 @@ export default {
     text-align: center;
   }
 
-
-
   button {
     border: 2px solid green;
     background: limegreen;
@@ -232,23 +237,28 @@ export default {
     width: 90px;
   }
 
-
-
-  .usersList {
-    height: 100%;
-    width: 50%;
-  }
-
-  .flex{
+  .flex {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
   }
 
+  img {
+    width: 40px;
+    border-radius: 50%;
+    background: beige;
+  }
 
+  th {
+    padding: 10px 10px 10px 10px;
+  }
 
+  .listUsers {
+    height: 100%;
+  }
 
-
-
+  .detailUsers {
+    width: 670px;
+    height: 100%;
+  }
 
 </style>
