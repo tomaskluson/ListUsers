@@ -1,6 +1,6 @@
 <template>
-  <div class="flex">
-    <div class="listUsers">
+  <div class="flex userList">
+    <div>
       <div v-if="this.users.length !== 0">
         <table>
           <thead>
@@ -33,7 +33,7 @@
                     v-bind:size="size" :sortDataTable="sortDataTable" />
       </div>
     </div>
-    <div class="detailUsers">
+    <div>
       <detail-user v-bind:selectedUser="selectedUser" :onImgError="onImgError" />
     </div>
   </div>
@@ -207,19 +207,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  body {
-    margin-top: -30px;
-  }
 
   table {
+    font-family: arial, sans-serif;
     border-collapse: collapse;
     border: 2px solid black;
-    width: 800px;
+    margin-right: 140px;
+    table-layout: auto;
+    width: 100%;
   }
 
-  tr, td {
+  /*tr, td {
     padding: 15px 15px;
-  }
+  }*/
 
   tr:hover {
     background: lightskyblue;
@@ -248,17 +248,111 @@ export default {
     background: beige;
   }
 
-  th {
-    padding: 10px 10px 10px 10px;
+  .styled th, .styled td {
+    padding: 15px 20px;
+    text-align: left;
   }
 
-  .listUsers {
-    height: 100%;
+  table.styled {
+    width: 100%;
   }
 
-  .detailUsers {
-    width: 670px;
-    height: 100%;
+  *, *:after, *:before { box-sizing: border-box; }
+
+  /*@media (max-width: 1450px) {
+    .container {
+      width: 100%;
+    }
   }
+
+  @media (min-width: 1450px) {
+    .container {
+      width: 100%;
+    }
+  }*/
+  /*@media (max-width: 1100px) {
+    .container {
+      width: 100%;
+    }
+  }
+  @media (max-width: 750px) {
+    .styled th, .styled td {
+      padding: 10px;
+    }
+  }
+  @media (max-width: 400px) {
+    .container {
+      width: 100%;
+    }
+  }*/
+
+
+
+
+
+  @media only screen and (max-width: 1600px) {
+    table {
+      width: 100%;
+    }
+
+    .userList {
+      font-size: 14px;
+      padding: 10px;
+      align-content: center;
+      width: 500px;
+    }
+  }
+
+
+  /*@media only screen and (max-width: 1150px) {*/
+  @media only screen and (max-width: 1150px) {
+    table {
+      width: 100%;
+    }
+
+    .userList {
+      width: 100%;
+      font-size: 14px;
+      padding: 10px;
+      align-content: center;
+      display: inline;
+    }
+
+  }
+
+  @media only screen and (max-width: 650px) {
+    table {
+      width: 100%;
+    }
+    .userList {
+      width: 100%;
+      font-size: 11px;
+      padding: 10px;
+      align-content: center;
+      display: inline;
+    }
+    .detailUsers {
+      display: flex;
+    }
+  }
+
+  /*@media (max-width: 1000px) and (min-width: 500px) {
+    table {
+      background: lightskyblue;
+    }
+    .container {
+      width: 100%;
+      font-size: 15px;
+      padding: 10px;
+      align-content: center;
+      display: inline;
+    }
+    .styled th, .styled td {
+      padding: 0;
+    }
+    .detailUsers {
+      display: flex;
+    }
+  }*/
 
 </style>

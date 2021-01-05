@@ -9,35 +9,35 @@
     <div class="container">
       <div class="box">
         <p class="textBold">First Name:</p>
-        <p>{{ selectedUser.firstName }}</p>
+        <p class="normalText">{{ selectedUser.firstName }}</p>
       </div>
       <div class="box2">
         <p class="textBold">Last Name:</p>
-        <p>{{ selectedUser.lastName }}</p>
+        <p class="normalText">{{ selectedUser.lastName }}</p>
       </div>
       <div class="box">
         <p class="textBold">Gender:</p>
-        <p>{{ selectedUser.gender }}</p>
+        <p class="normalText">{{ selectedUser.gender }}</p>
       </div>
     </div>
     <div class="container">
       <div class="box">
         <p class="textBold">Age:</p>
-        <p>{{ selectedUser.age }}</p>
+        <p class="normalText">{{ selectedUser.age }}</p>
       </div>
       <div class="box2">
         <p class="textBold">Status</p>
-        <p>{{ selectedUser.status }}</p>
+        <p class="normalText">{{ selectedUser.status }}</p>
       </div>
       <div class="box">
         <p class="textBold">Birth date:</p>
-        <p>{{ selectedUser.birthdate }}</p>
+        <p class="normalText">{{ selectedUser.birthdate }}</p>
       </div>
     </div>
     <div class="container">
       <div class="box">
         <p class="textBold">Address:</p>
-        <p>
+        <p class="normalText">
           {{ selectedUser.address.country }} <br>
           {{ selectedUser.address.city }} <br>
           {{ selectedUser.address.state }}
@@ -47,11 +47,11 @@
       </div>
       <div class="box2">
         <p class="textBold">Phone:</p>
-        <p>{{ selectedUser.phone }}</p>
+        <p class="normalText">{{ selectedUser.phone }}</p>
       </div>
       <div class="box">
         <p class="textBold">Email:</p>
-        <p>{{ selectedUser.email }}</p>
+        <p class="normalText">{{ selectedUser.email }}</p>
       </div>
     </div>
   </div>
@@ -83,9 +83,9 @@ export default {
 
 <style lang="scss" scoped>
 #flex {
-
   border: 2px solid black;
   margin-left: 10px;
+  width: calc(((100vw - 140%)/2) );
 }
 
 img {
@@ -98,23 +98,31 @@ img {
 .container {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
   text-align: left;
   align-content: space-between;
+  flex-wrap: wrap;
+
 }
 
 .box {
+  margin-left: 10px;
   width: 200px;
 }
 
 .box2 {
   width: 100px;
-  margin-left: -70px;
+  margin-bottom: 10px;
+  margin-left: -107px;
 }
 
 .textBold {
   font-weight: bold;
-  margin-bottom: -15px;
+  margin-bottom: -10px;
+  margin-left: 21px;
 }
 
+.normalText {
+  margin-left: 21px;
+
+}
 </style>

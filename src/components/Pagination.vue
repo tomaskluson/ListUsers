@@ -70,6 +70,7 @@ export default {
     background: limegreen;
     height: 30px;
     width: 90px;
+    margin-bottom: 10px;
   }
 
   span {
