@@ -301,6 +301,10 @@ export default {
       align-content: center;
       width: 500px;
     }
+
+    #flex {
+      width: calc(((100vw - 90%)/2 + 10%));
+    }
   }
 
 
@@ -318,6 +322,11 @@ export default {
       display: inline;
     }
 
+    #flex {
+      border: 2px solid black;
+      margin-left: 3px;
+      width: 100%;
+    }
   }
 
   @media only screen and (max-width: 650px) {
@@ -333,6 +342,11 @@ export default {
     }
     .detailUsers {
       display: flex;
+    }
+    #flex {
+      border: 2px solid black;
+      margin-left: 3px;
+      width: 100%;
     }
   }
 

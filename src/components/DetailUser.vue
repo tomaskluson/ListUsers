@@ -84,8 +84,8 @@ export default {
 <style lang="scss" scoped>
 #flex {
   border: 2px solid black;
-  margin-left: 10px;
-  width: calc(((100vw - 140%)/2) );
+  margin-left: 3px;
+  /*width: calc(((100vw - 140%)/2));*/
 }
 
 img {
@@ -100,8 +100,7 @@ img {
   justify-content: space-around;
   text-align: left;
   align-content: space-between;
-  flex-wrap: wrap;
-
+  /*flex-wrap: wrap;*/
 }
 
 .box {
